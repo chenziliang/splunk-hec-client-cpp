@@ -7,4 +7,5 @@ set(SOURCE_FILES
         LICENSE
         README.md event.h serialize.h raw_event.h json_event.h)
 
-add_library(splunk_hec_client_cpp.so ${SOURCE_FILES})
+include_directories(${PROJECT_SOURCE_DIR})
+add_subdirectory(examples)

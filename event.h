@@ -9,9 +9,11 @@
 #include <type_traits>
 
 #include "serialize.h"
+#include "base_event.h"
 
 #include "rapidjson/include/rapidjson/writer.h"
 
+namespace splunkhec {
 
 static const std::string sTime = "time";
 static const std::string sHost = "host";
@@ -23,87 +25,87 @@ static const std::string sEvent = "event";
 using DefaultWriter = rapidjson::Writer<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::RAPIDJSON_WRITE_DEFAULT_FLAGS>;
 
 template <typename T>
-class Event {
+class Event: public BaseEvent {
 public:
-    Event(const T& eventData, void* tiedObj):
-            event(eventData), tied(tiedObj) {
+    Event(const T& event, void* tied):
+            event_(event), tied_(tied) {
     }
 
-    Event(T&& eventData, void *tiedObj):
-            event(eventData), tied(tiedObj) {
+    Event(T&& event, void *tied):
+            event_(event), tied_(tied) {
     }
 
     virtual ~Event() {
     }
 
-
-
-    Event& setTime(int64_t t) {
-        time = t;
+    Event& set_time(int64_t t) final {
+        time_ = t;
         return *this;
     }
 
-    int64_t getTime() const {
-        return time;
+    int64_t time() const final {
+        return time_;
     }
 
-    Event& setHost(const std::string& h) {
-        host = h;
+    Event& set_host(const std::string& h) final {
+        host_ = h;
         return *this;
     }
 
-    const std::string& getHost() const {
-        return host;
+    const std::string& host() const final {
+        return host_;
     }
 
-    Event& setSource(const std::string& s) {
-        source = s;
+    Event& set_source(const std::string& s) final {
+        source_ = s;
         return *this;
     }
 
-    const std::string& getSource() const {
-        return source;
+    const std::string& source() const final {
+        return source_;
     }
 
-    Event& setSourcetype(const std::string& s) {
-        sourcetype = s;
+    Event& set_sourcetype(const std::string& s) final {
+        sourcetype_ = s;
         return *this;
     }
 
-    const std::string& getSourcetype() const {
-        return sourcetype;
+    const std::string& sourcetype() const final {
+        return sourcetype_;
     }
 
-    Event& setIndex(const std::string& i) {
-        index = i;
+    Event& set_index(const std::string& i) final {
+        index_ = i;
         return *this;
     }
 
-    const std::string& getIndex() const {
-        return index;
+    const std::string& index() const final {
+        return index_;
     }
 
-    void* getTied() const {
-        return tied;
+    void* tied() const final {
+        return tied_;
     }
 
-    Event& setLineBreaker(const std::string& breaker) {
-        lineBreaker = breaker;
+    Event& set_linebreaker(const std::string& breaker) final {
+        line_breaker_ = breaker;
         return *this;
     }
 
 protected:
-    int64_t time = -1;
-    std::string host;
-    std::string index;
-    std::string source;
-    std::string sourcetype;
-    T event;
+    int64_t time_ = -1;
+    std::string host_;
+    std::string index_;
+    std::string source_;
+    std::string sourcetype_;
+    T event_;
 
-    std::string lineBreaker = "\n";
+    std::string line_breaker_ = "\n";
 
     // Event doesn't own tied object
-    void *tied;
+    void *tied_;
 };
+
+} // namespace splunkhec
 
 #endif //SPLUNK_HEC_CLIENT_CPP_EVENT_H

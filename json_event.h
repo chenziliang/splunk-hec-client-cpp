@@ -10,6 +10,8 @@
 
 #include "event.h"
 
+namespace splunkhec {
+
 static const std::string sFields = "fields";
 
 template <typename T>
@@ -21,14 +23,14 @@ public:
     JsonEvent(T&& eventData, void *tiedObj): Event<T>(eventData, tiedObj) {
     }
 
-    JsonEvent& addFields(const std::map<std::string, std::string>& extraFields) {
+    JsonEvent& add_fields(const std::map<std::string, std::string>& extraFields) {
         for(const auto& k: extraFields) {
             fields[k.first] = k.second;
         }
         return *this;
     }
 
-    JsonEvent& setFields(const std::map<std::string, std::string>& extraFields) {
+    JsonEvent& set_fields(const std::map<std::string, std::string>& extraFields) {
         fields = extraFields;
         return *this;
     }
@@ -43,27 +45,27 @@ public:
     void serialize(Writer& writer) const {
         writer.StartObject();
 
-        if (Event<T>::time > 0) {
+        if (Event<T>::time_ > 0) {
             writer.String(sTime.data(), sTime.size());
-            writer.Int64(Event<T>::time);
+            writer.Int64(Event<T>::time_);
         }
 
-        WRITE_IF_NOT_EMPTY(sHost, Event<T>::host);
-        WRITE_IF_NOT_EMPTY(sIndex, Event<T>::index);
-        WRITE_IF_NOT_EMPTY(sSource, Event<T>::source);
-        WRITE_IF_NOT_EMPTY(sSourcetype, Event<T>::sourcetype);
+        WRITE_IF_NOT_EMPTY(sHost, Event<T>::host_);
+        WRITE_IF_NOT_EMPTY(sIndex, Event<T>::index_);
+        WRITE_IF_NOT_EMPTY(sSource, Event<T>::source_);
+        WRITE_IF_NOT_EMPTY(sSourcetype, Event<T>::sourcetype_);
 
-        serializeFields(writer);
+        serialize_fields(writer);
 
         writer.String(sEvent.data(), sEvent.size());
-        ::serialize(writer, Event<T>::event);
+        splunkhec::serialize(writer, Event<T>::event_);
 
         writer.EndObject();
     }
 
 private:
     template <typename Writer>
-    void serializeFields(Writer& writer) const {
+    void serialize_fields(Writer& writer) const {
         writer.String(sFields.data(), sFields.size());
         writer.StartObject();
         for (const auto& kv: fields) {
@@ -76,5 +78,7 @@ private:
 private:
     std::map<std::string, std::string> fields;
 };
+
+} // namespace splunkhec
 
 #endif //SPLUNK_HEC_CLIENT_CPP_JSON_EVENT_H_H

@@ -8,6 +8,9 @@
 #include <string>
 #include <cstddef>
 
+namespace splunkhec {
+
+
 template <typename T, typename Writer>
 void serialize(Writer& writer, const T& t) {
     t.serialize(writer);
@@ -57,5 +60,7 @@ template <typename Writer>
 void serialize(Writer& writer, const std::string& t) {
     writer.String(t.data(), t.size());
 };
+
+} // namespace splunkhec
 
 #endif //SPLUNK_HEC_CLIENT_CPP_SERIALIZE_H

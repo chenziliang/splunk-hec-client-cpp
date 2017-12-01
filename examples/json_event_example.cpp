@@ -10,17 +10,18 @@
 
 using namespace std;
 using namespace rapidjson;
+using namespace splunkhec;
 
 template <typename T>
 static void serialize(T t) {
     auto event = new JsonEvent<T>(t, nullptr);
-    event->setTime(1000);
-    event->setHost("localhost");
-    event->setSource("source");
-    event->setSourcetype("sourcetype");
-    event->setIndex("index");
+    event->set_time(1000);
+    event->set_host("localhost");
+    event->set_source("source");
+    event->set_sourcetype("sourcetype");
+    event->set_index("index");
     map<string, string> fields{{"k1", "v1"}, {"k2", "v2"}};
-    event->setFields(fields);
+    event->set_fields(fields);
     StringBuffer sb;
     PrettyWriter<StringBuffer> writer(sb);
     event->serialize(writer);
@@ -36,7 +37,7 @@ public:
     Writer& serialize(Writer& writer) const {
         writer.StartArray();
         for (auto i: a) {
-            ::serialize(writer, i);
+            splunkhec::serialize(writer, i);
         }
         writer.EndArray();
 
@@ -45,7 +46,7 @@ public:
 };
 
 
-int __main(int argc, const char** argv) {
+int main(int argc, const char** argv) {
     serialize("hello world");
     serialize(string("hello world string"));
     serialize(100);

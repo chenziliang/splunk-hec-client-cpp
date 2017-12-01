@@ -7,23 +7,28 @@
 
 #include <string>
 
+#include "serialize.h"
 #include "event.h"
+
+namespace splunkhec {
 
 template <typename T>
 class RawEvent: public Event<T> {
 public:
     RawEvent(const T& eventData, void* tiedObj): Event<T>(eventData, tiedObj) {
-        Event<T>::setLineBreaker("");
+        Event<T>::set_linebreaker("");
     }
 
     RawEvent(T&& eventData, void *tiedObj): Event<T>(eventData, tiedObj) {
-        Event<T>::setLineBreaker("");
+        Event<T>::set_linebreaker("");
     }
 
     template <typename Writer>
     void serialize(Writer& writer) const {
-        ::serialize(writer, Event<T>::event);
+        splunkhec::serialize(writer, Event<T>::event_);
     }
 };
+
+} // namespace splunkhec
 
 #endif //SPLUNK_HEC_CLIENT_CPP_RAW_EVENT_H

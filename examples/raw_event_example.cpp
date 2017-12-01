@@ -7,15 +7,16 @@
 
 using namespace std;
 using namespace rapidjson;
+using namespace splunkhec;
 
 template <typename T>
 static void serialize(T t) {
     auto event = new RawEvent<T>(t, nullptr);
-    event->setTime(1000);
-    event->setHost("localhost");
-    event->setSource("source");
-    event->setSourcetype("sourcetype");
-    event->setIndex("index");
+    event->set_time(1000);
+    event->set_host("localhost");
+    event->set_source("source");
+    event->set_sourcetype("sourcetype");
+    event->set_index("index");
 
     StringBuffer sb;
     PrettyWriter<StringBuffer> writer(sb);
@@ -32,7 +33,7 @@ public:
     Writer& serialize(Writer& writer) const {
         writer.StartArray();
         for (auto i: a) {
-            ::serialize(writer, i);
+            splunkhec::serialize(writer, i);
         }
         writer.EndArray();
 
