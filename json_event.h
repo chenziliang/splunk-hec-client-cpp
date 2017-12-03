@@ -15,7 +15,7 @@ namespace splunkhec {
 static const std::string sFields = "fields";
 
 template <typename T>
-class JsonEvent: public Event<T> {
+class JsonEvent final: public Event<T> {
 public:
     JsonEvent(const T& eventData, void* tiedObj): Event<T>(eventData, tiedObj) {
     }
@@ -23,15 +23,15 @@ public:
     JsonEvent(T&& eventData, void *tiedObj): Event<T>(eventData, tiedObj) {
     }
 
-    JsonEvent& add_fields(const std::map<std::string, std::string>& extraFields) {
+    JsonEvent& add_fields(const std::map<std::string, std::string>& extraFields) override {
         for(const auto& k: extraFields) {
-            fields[k.first] = k.second;
+            fields_[k.first] = k.second;
         }
         return *this;
     }
 
-    JsonEvent& set_fields(const std::map<std::string, std::string>& extraFields) {
-        fields = extraFields;
+    JsonEvent& set_fields(const std::map<std::string, std::string>& extraFields) override {
+        fields_ = extraFields;
         return *this;
     }
 
@@ -41,8 +41,8 @@ public:
         writer.String(v.data(), v.size()); \
     }
 
-    template <typename Writer>
-    void serialize(Writer& writer) const {
+    void serialize(DefaultStringBuffer& buffer) const override {
+        DefaultWriter writer(buffer);
         writer.StartObject();
 
         if (Event<T>::time_ > 0) {
@@ -66,9 +66,13 @@ public:
 private:
     template <typename Writer>
     void serialize_fields(Writer& writer) const {
+        if (fields_.empty()) {
+            return;
+        }
+
         writer.String(sFields.data(), sFields.size());
         writer.StartObject();
-        for (const auto& kv: fields) {
+        for (const auto& kv: fields_) {
             writer.String(kv.first.data(), kv.first.size());
             writer.String(kv.second.data(), kv.second.size());
         }
@@ -76,7 +80,7 @@ private:
     }
 
 private:
-    std::map<std::string, std::string> fields;
+    std::map<std::string, std::string> fields_;
 };
 
 } // namespace splunkhec

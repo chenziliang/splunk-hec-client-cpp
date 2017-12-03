@@ -11,6 +11,7 @@ namespace splunkhec {
 RawEventBatch::RawEventBatch(const string& index, const string& source,
                              const string& sourcetype, const string& host, int64_t time) :
         index_(index), source_(source), sourcetype_(sourcetype), host_(host), time_(time) {
+    set_linebreaker("");
 }
 
 

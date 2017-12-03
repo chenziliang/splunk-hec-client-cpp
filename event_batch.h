@@ -30,6 +30,21 @@ public:
     virtual std::string content_type() const = 0;
     virtual EventBatch* create_from_this() const = 0;
 
+    std::vector<unsigned char> serialize() const {
+        std::vector<unsigned char> bytes;
+        rapidjson::StringBuffer buffer;
+        for (const auto& ev: events_) {
+            ev->serialize(buffer);
+            std::size_t size = bytes.size();
+            bytes.resize(bytes.size() + buffer.GetSize() + line_breaker_.size());
+            std::memcpy(&bytes[size], buffer.GetString(), buffer.GetSize());
+            std:memcpy(&bytes[size + buffer.GetSize()], line_breaker_.data(), line_breaker_.size());
+
+            buffer.Clear();
+        }
+        return bytes;
+    }
+
     void add(BaseEvent* event) {
         assert (event != nullptr);
         events_.emplace_back(event);
@@ -88,18 +103,24 @@ public:
         return events_.size();
     }
 
-    std::size_t size_in_bytes() const {
-        return len_;
+    EventBatch& set_linebreaker(const std::string& breaker) {
+        line_breaker_ = breaker;
+        return *this;
     }
 
+    const std::string& line_breaker() const {
+        return line_breaker_;
+    }
 
     bool empty() const {
         return events_.empty();
     }
 
 protected:
-    std::size_t len_;
     EventContainer events_;
+
+private:
+    std::string line_breaker_ = "\n";
 
 private:
     volatile EventBatchStatus status_ = INIT;

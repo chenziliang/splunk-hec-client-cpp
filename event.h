@@ -11,8 +11,6 @@
 #include "serialize.h"
 #include "base_event.h"
 
-#include "rapidjson/include/rapidjson/writer.h"
-
 namespace splunkhec {
 
 static const std::string sTime = "time";
@@ -22,8 +20,10 @@ static const std::string sSource = "source";
 static const std::string sSourcetype = "sourcetype";
 static const std::string sEvent = "event";
 
-using DefaultWriter = rapidjson::Writer<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::RAPIDJSON_WRITE_DEFAULT_FLAGS>;
-
+// If T are builint types: integer, double, string, char*, bool
+// then the serialization just works
+// If T is object or array, clients need wrap object or array to
+// implements void serialize(Writer& writer) interface
 template <typename T>
 class Event: public BaseEvent {
 public:
@@ -87,10 +87,7 @@ public:
         return tied_;
     }
 
-    Event& set_linebreaker(const std::string& breaker) final {
-        line_breaker_ = breaker;
-        return *this;
-    }
+
 
 protected:
     int64_t time_ = -1;
@@ -99,8 +96,6 @@ protected:
     std::string source_;
     std::string sourcetype_;
     T event_;
-
-    std::string line_breaker_ = "\n";
 
     // Event doesn't own tied object
     void *tied_;

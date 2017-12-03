@@ -13,18 +13,16 @@
 namespace splunkhec {
 
 template <typename T>
-class RawEvent: public Event<T> {
+class RawEvent final: public Event<T> {
 public:
     RawEvent(const T& eventData, void* tiedObj): Event<T>(eventData, tiedObj) {
-        Event<T>::set_linebreaker("");
     }
 
     RawEvent(T&& eventData, void *tiedObj): Event<T>(eventData, tiedObj) {
-        Event<T>::set_linebreaker("");
     }
 
-    template <typename Writer>
-    void serialize(Writer& writer) const {
+    void serialize(DefaultStringBuffer& buffer) const override {
+        DefaultWriter writer(buffer);
         splunkhec::serialize(writer, Event<T>::event_);
     }
 };

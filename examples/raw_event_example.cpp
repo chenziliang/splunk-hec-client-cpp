@@ -19,8 +19,7 @@ static void serialize(T t) {
     event->set_index("index");
 
     StringBuffer sb;
-    PrettyWriter<StringBuffer> writer(sb);
-    event->serialize(writer);
+    event->serialize(sb);
     puts(sb.GetString());
 }
 

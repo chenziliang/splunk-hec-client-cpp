@@ -23,8 +23,7 @@ static void serialize(T t) {
     map<string, string> fields{{"k1", "v1"}, {"k2", "v2"}};
     event->set_fields(fields);
     StringBuffer sb;
-    PrettyWriter<StringBuffer> writer(sb);
-    event->serialize(writer);
+    event->serialize(sb);
     puts(sb.GetString());
 }
 
@@ -56,8 +55,6 @@ int main(int argc, const char** argv) {
     serialize(18.0);
     serialize(true);
     serialize(nullptr);
-
-
     serialize(WrapArray());
 
     return 0;
