@@ -7,12 +7,14 @@
 
 #include "event_batch.h"
 
+#include <memory>
+
 namespace splunkhec {
 
 class IndexerInf {
 public:
     virtual ~IndexerInf() {}
-    virtual void send(const EventBatch& batch) const = 0;
+    virtual void send(const std::shared_ptr<EventBatch>& batch) const = 0;
     virtual bool has_backpressure() const = 0;
 };
 

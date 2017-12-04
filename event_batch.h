@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "event_inf.h"
 #include "event.h"
@@ -30,32 +31,9 @@ public:
     virtual std::string content_type() const = 0;
     virtual EventBatch* create_from_this() const = 0;
 
-    std::vector<unsigned char> serialize() const {
-        std::vector<unsigned char> bytes;
-        rapidjson::StringBuffer buffer;
-        for (const auto& ev: events_) {
-            ev->serialize(buffer);
-            std::size_t size = bytes.size();
-            bytes.resize(bytes.size() + buffer.GetSize() + line_breaker_.size());
-            std::memcpy(&bytes[size], buffer.GetString(), buffer.GetSize());
-            std:memcpy(&bytes[size + buffer.GetSize()], line_breaker_.data(), line_breaker_.size());
-
-            buffer.Clear();
-        }
-        return bytes;
-    }
-
-    void add(EventInf* event) {
-        assert (event != nullptr);
-        events_.emplace_back(event);
-    }
-
-    EventBatch& add_extra_fields(const std::map<std::string, std::string>& fields) {
-        for (auto& event: events_) {
-            event->add_fields(fields);
-        }
-        return *this;
-    }
+    std::vector<unsigned char> serialize() const;
+    void add(EventInf* event);
+    EventBatch& add_extra_fields(const std::map<std::string, std::string>& fields);
 
     bool timedout(int ttl /* in seconds */) const {
         auto now = std::chrono::steady_clock::now();
