@@ -9,7 +9,7 @@
 #include <type_traits>
 
 #include "serialize.h"
-#include "base_event.h"
+#include "event_inf.h"
 
 namespace splunkhec {
 
@@ -25,7 +25,7 @@ static const std::string sEvent = "event";
 // If T is object or array, clients need wrap object or array to
 // implements void serialize(Writer& writer) interface
 template <typename T>
-class Event: public BaseEvent {
+class Event: public EventInf {
 public:
     Event(const T& event, void* tied):
             event_(event), tied_(tied) {
@@ -86,8 +86,6 @@ public:
     void* tied() const final {
         return tied_;
     }
-
-
 
 protected:
     int64_t time_ = -1;

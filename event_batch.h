@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "base_event.h"
+#include "event_inf.h"
 #include "event.h"
 
 namespace splunkhec {
@@ -21,7 +21,7 @@ enum EventBatchStatus {
     FAILED
 };
 
-using EventContainer = std::vector<std::unique_ptr<BaseEvent>>;
+using EventContainer = std::vector<std::unique_ptr<EventInf>>;
 
 class EventBatch {
 public:
@@ -45,7 +45,7 @@ public:
         return bytes;
     }
 
-    void add(BaseEvent* event) {
+    void add(EventInf* event) {
         assert (event != nullptr);
         events_.emplace_back(event);
     }

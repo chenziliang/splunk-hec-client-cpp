@@ -17,10 +17,10 @@ static const std::string sFields = "fields";
 template <typename T>
 class JsonEvent final: public Event<T> {
 public:
-    JsonEvent(const T& eventData, void* tiedObj): Event<T>(eventData, tiedObj) {
+    explicit JsonEvent(const T& eventData, void* tiedObj = nullptr): Event<T>(eventData, tiedObj) {
     }
 
-    JsonEvent(T&& eventData, void *tiedObj): Event<T>(eventData, tiedObj) {
+    explicit JsonEvent(T&& eventData, void *tiedObj = nullptr): Event<T>(eventData, tiedObj) {
     }
 
     JsonEvent& add_fields(const std::map<std::string, std::string>& extraFields) override {

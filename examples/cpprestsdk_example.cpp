@@ -4,6 +4,10 @@
 
 #include <cpprest/http_client.h>
 #include <iostream>
+#include <memory>
+
+#include "config.h"
+#include "http_client_factory.h"
 
 using namespace std;
 
@@ -13,11 +17,14 @@ using namespace web;                        // Common features like URIs.
 using namespace web::http;                  // Common HTTP functionality
 using namespace web::http::client;          // HTTP client features
 using namespace web::json;
+using namespace splunkhec;
 
 int main(int argc, const char** argv) {
-    http_client_config config;
-    config.set_validate_certificates(false);
-    http_client client("https://localhost:8088/services/collector/event", config);
+    Config config;
+    config.http_validate_certs_ = false;
+    HttpClientFactory factory(config);
+
+    unique_ptr<http_client> client(factory.create("https://localhost:8088/services/collector/event"));
 
     http_request req(methods::POST);
     req.headers().set_content_type("application/json");
@@ -33,7 +40,7 @@ int main(int argc, const char** argv) {
     v["event"]["k2"] = value::string("v2");
     req.set_body(v);
 
-    task<void> res = client.request(req).then([=](task<http_response> t) {
+    task<void> res = client->request(req).then([=](task<http_response> t) {
         try {
             auto response = t.get();
             // cout << response.extract_string().get() << endl;
