@@ -5,11 +5,11 @@
 #ifndef SPLUNK_HEC_CLIENT_CPP_EVENT_H
 #define SPLUNK_HEC_CLIENT_CPP_EVENT_H
 
-#include <string>
-#include <type_traits>
-
 #include "serialize.h"
 #include "event_inf.h"
+
+#include <string>
+#include <type_traits>
 
 namespace splunkhec {
 
@@ -27,11 +27,11 @@ static const std::string sEvent = "event";
 template <typename T>
 class Event: public EventInf {
 public:
-    Event(const T& event, void* tied):
+    Event(const T& event, const boost::any& tied):
             event_(event), tied_(tied) {
     }
 
-    Event(T&& event, void *tied):
+    Event(T&& event, const boost::any& tied):
             event_(event), tied_(tied) {
     }
 
@@ -83,7 +83,7 @@ public:
         return index_;
     }
 
-    void* tied() const final {
+    const boost::any& tied() const final {
         return tied_;
     }
 
@@ -96,7 +96,7 @@ protected:
     T event_;
 
     // Event doesn't own tied object
-    void *tied_;
+    boost::any tied_;
 };
 
 } // namespace splunkhec

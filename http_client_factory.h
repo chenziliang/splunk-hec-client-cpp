@@ -8,20 +8,29 @@
 #include <memory>
 #include <cpprest/http_client.h>
 
-#include "config.h"
-
 namespace splunkhec {
 
 class HttpClientFactory {
 public:
-    explicit HttpClientFactory(const Config& config) {
-        config_.set_chunksize(config.http_buffer_size_);
-        config_.set_timeout(config.http_timeout_);
-        config_.set_validate_certificates(config.http_validate_certs_);
+    HttpClientFactory() = default;
+
+    HttpClientFactory& set_chunksize(std::size_t chunk_size) {
+        config_.set_chunksize(chunk_size);
+        return *this;
     }
 
-    std::unique_ptr<web::http::client::http_client> create(const std::string& uri) {
-        return std::unique_ptr<web::http::client::http_client>(new web::http::client::http_client(uri, config_));
+    HttpClientFactory& set_timeout(std::chrono::seconds timeout) {
+        config_.set_timeout(timeout);
+        return *this;
+    }
+
+    HttpClientFactory& set_validate_certificates(bool validate_certs) {
+        config_.set_validate_certificates(validate_certs);
+        return *this;
+    }
+
+    web::http::client::http_client* create(const std::string& uri) const {
+        return new web::http::client::http_client(uri, config_);
     }
 
 private:

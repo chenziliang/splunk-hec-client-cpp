@@ -5,12 +5,14 @@
 #ifndef SPLUNK_HEC_CLIENT_CPP_BASE_EVENT_H
 #define SPLUNK_HEC_CLIENT_CPP_BASE_EVENT_H
 
+#include "rapidjson/include/rapidjson/writer.h"
+#include "rapidjson/include/rapidjson/stringbuffer.h"
+
+#include <boost/any.hpp>
+
 #include <map>
 #include <string>
 #include <cstring>
-
-#include "rapidjson/include/rapidjson/writer.h"
-#include "rapidjson/include/rapidjson/stringbuffer.h"
 
 namespace splunkhec {
 
@@ -30,7 +32,7 @@ public:
     virtual const std::string& sourcetype() const = 0;
     virtual EventInf& set_index(const std::string& i) = 0;
     virtual const std::string& index() const = 0;
-    virtual void* tied() const = 0;
+    virtual const boost::any& tied() const = 0;
     virtual void serialize(DefaultStringBuffer& buffer) const = 0;
 
     virtual EventInf& add_fields(const std::map<std::string, std::string>& fields) {

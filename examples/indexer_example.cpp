@@ -6,11 +6,11 @@
 #include "poller_callback_inf.h"
 
 #include "indexer.h"
-#include "config.h"
 #include "poller_inf.h"
 #include "hec_channel.h"
 #include "json_event_batch.h"
 #include "http_response_poller.h"
+#include "http_client_factory.h"
 
 #include <iostream>
 #include <vector>
@@ -33,12 +33,13 @@ using namespace std;
 using namespace splunkhec;
 
 int main(int argc, const char** argv) {
-    Config config;
-    config.http_validate_certs_ = false;
     shared_ptr<PollerCallbackInf> callback{new PollerCallback()};
     shared_ptr<HttpResponsePoller> poller{new HttpResponsePoller(callback)};
 
-    Indexer idx("https://localhost:8088", "1B901D2B-576D-40CD-AF1E-98141B499534", poller, config);
+    HttpClientFactory factory;
+    factory.set_validate_certificates(false);
+
+    Indexer idx("https://localhost:8088", "1B901D2B-576D-40CD-AF1E-98141B499534", poller, factory);
     shared_ptr<EventBatch> batch(new JsonEventBatch);
     batch->add(new JsonEvent<const char*>("hello, rest cpp sdk"));
     idx.send(batch);

@@ -2,12 +2,12 @@
 // Created by kchen on 12/1/17.
 //
 
+
+#include "http_client_factory.h"
+
 #include <cpprest/http_client.h>
 #include <iostream>
 #include <memory>
-
-#include "config.h"
-#include "http_client_factory.h"
 
 using namespace std;
 
@@ -20,9 +20,8 @@ using namespace web::json;
 using namespace splunkhec;
 
 int main(int argc, const char** argv) {
-    Config config;
-    config.http_validate_certs_ = false;
-    HttpClientFactory factory(config);
+    HttpClientFactory factory;
+    factory.set_validate_certificates(false);
 
     unique_ptr<http_client> client(factory.create("https://localhost:8088/services/collector/event"));
 

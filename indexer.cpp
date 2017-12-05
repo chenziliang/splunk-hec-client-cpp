@@ -8,13 +8,12 @@
 
 using namespace std;
 using namespace web::http;
+using namespace web::http::client;
 
 namespace splunkhec {
 
-Indexer::Indexer(const string& base_uri, const string& token, const shared_ptr<PollerInf>& poller, const Config& config)
-        : base_uri_(base_uri), token_("Splunk " + token), poller_(poller), config_(config), channel_(*this) {
-    HttpClientFactory factory(config_);
-    client_ = move(factory.create(base_uri_));
+Indexer::Indexer(const string& base_uri, const string& token, const shared_ptr<PollerInf>& poller, const HttpClientFactory& factory)
+        : token_("Splunk " + token), poller_(poller), channel_(*this), client_(factory.create(base_uri)), factory_(factory) {
 }
 
 void Indexer::send(const shared_ptr<EventBatch>& batch) const {
