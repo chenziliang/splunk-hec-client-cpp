@@ -1,0 +1,3 @@
+[submodule "concurrent"]
+	path = concurrent
+	url = https://github.com/chenziliang/concurrent-cpp
