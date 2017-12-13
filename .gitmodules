@@ -1,3 +1,6 @@
 [submodule "concurrent"]
 	path = concurrent
 	url = https://github.com/chenziliang/concurrent-cpp
+[submodule "rapidjson"]
+	path = rapidjson
+	url = https://github.com/Tencent/rapidjson.git
