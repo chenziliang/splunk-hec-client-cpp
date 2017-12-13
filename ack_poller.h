@@ -47,6 +47,9 @@ public:
         return *this;
     }
 
+    AckPoller& operator=(const AckPoller&) = delete;
+    AckPoller(const AckPoller&) = delete;
+
 private:
     void poll();
     void do_poll();
@@ -62,16 +65,6 @@ private:
     public:
         OutstandingBatches(const std::shared_ptr<IndexerInf>& indexer, AckPoller* poller): indexer_(indexer), lock_(new std::mutex()) {
         }
-
-        /*OutstandingBatches(OutstandingBatches&& rhs): indexer_(std::move(rhs.indexer_)), lock_(std::move(rhs.lock_)), batches_(std::move(rhs.batches_)) {
-        }
-
-        OutstandingBatches& operator=(OutstandingBatches&& rhs) {
-            indexer_ = std::move(rhs.indexer_);
-            lock_ = std::move(rhs.lock_);
-            batches_ = std::move(rhs.batches_);
-            return *this;
-        }*/
 
         void add(int64_t ack_id, const std::shared_ptr<EventBatch>& batch) {
             std::lock_guard<std::mutex> guard{*lock_};

@@ -25,17 +25,19 @@ Indexer::Indexer(const string& base_uri, const string& token, const shared_ptr<P
     swap(channel_, channel);
 }
 
-void Indexer::send(const shared_ptr<EventBatch>& batch) const {
+bool Indexer::send(const shared_ptr<EventBatch>& batch) {
     Indexer* indexer = const_cast<Indexer*>(this);
     try {
         string resp = post(batch->rest_endpoint(), batch->serialize(), batch->content_type());
         poller_->add(indexer->shared_from_this(), batch, resp);
     } catch (const HecException& ex) {
         poller_->fail(indexer->shared_from_this(), batch, ex);
+        return false;
     }
+    return true;
 }
 
-string Indexer::post(const string& uri, const vector<unsigned char>& data, const string& content_type) const {
+string Indexer::post(const string& uri, const vector<unsigned char>& data, const string& content_type) {
     http_request req{methods::POST};
     auto &headers = req.headers();
     headers.set_content_type(content_type);
@@ -45,38 +47,62 @@ string Indexer::post(const string& uri, const vector<unsigned char>& data, const
     req.set_request_uri(uri);
 
     string resp;
-    bool has_exception = false;
     HecException except("", 0);
+
     pplx::task<void> res = client_->request(req).then([&](pplx::task<http_response> t) {
-        Indexer *indexer = const_cast<Indexer *>(this);
         try {
             http_response response = t.get();
-            resp = response.extract_string().get();
+            auto r = response.extract_string().get();
+
+            auto code = response.status_code();
+            if (code == 503) {
+                // server busy
+                log_backpressure();
+            }
+
+            if (code != 200 && code != 201) {
+                except = HecException(r, code);
+            } else {
+                resp = r;
+            }
         } catch (const http_exception& e) {
+            log_backpressure();
             HecException ex(e.what(), e.error_code().value());
             except = ex;
-            has_exception = true;
         } catch (const exception &e) {
+            log_backpressure();
             HecException ex(e.what(), -1);
             except = ex;
-            has_exception = true;
         }
     });
     res.get();
 
-    if (has_exception) {
+    if (except.error_code() != 0) {
         throw except;
     }
+
+    clear_backpressure();
 
     return resp;
 }
 
-} // namespace splunkhec
-
-namespace std {
-    template<> struct hash<splunkhec::Indexer> {
-        std::size_t operator()(const splunkhec::Indexer& indexer) const {
-            return std::hash<std::string>{}(indexer.channel());
+bool Indexer::has_backpressure() const {
+    if (backpressure_ > 0) {
+        auto now = chrono::steady_clock::now();
+        auto elapsed = chrono::duration_cast<std::chrono::seconds>(now - last_backpressure_time_);
+        if (elapsed < backpressure_window_) {
+            return true;
         }
-    };
-} // namespace std
+
+        // passed the backpressure window
+        Indexer* self = const_cast<Indexer*>(this);
+        self->clear_backpressure();
+        return false;
+    }
+
+    return false;
+}
+
+const chrono::seconds Indexer::backpressure_window_ = chrono::seconds{60};
+
+} // namespace splunkhec

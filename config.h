@@ -19,6 +19,8 @@ public:
 
     std::vector<std::string> uris_;
     std::string token_;
+
+    int ack_poll_threads_ = 2;
     int total_channels_ = 2;
     bool http_validate_certs_ = true;
     bool enable_channel_tracking = false;
