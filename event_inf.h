@@ -5,8 +5,7 @@
 #ifndef SPLUNK_HEC_CLIENT_CPP_BASE_EVENT_H
 #define SPLUNK_HEC_CLIENT_CPP_BASE_EVENT_H
 
-#include "rapidjson/include/rapidjson/writer.h"
-#include "rapidjson/include/rapidjson/stringbuffer.h"
+#include "serialize.h"
 
 #include <boost/any.hpp>
 
@@ -16,8 +15,6 @@
 
 namespace splunkhec {
 
-using DefaultWriter = rapidjson::Writer<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::RAPIDJSON_WRITE_DEFAULT_FLAGS>;
-using DefaultStringBuffer = rapidjson::StringBuffer;
 
 class EventInf {
 public:

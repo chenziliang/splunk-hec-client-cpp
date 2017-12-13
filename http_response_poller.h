@@ -7,7 +7,7 @@
 
 #include "poller_inf.h"
 #include "poller_callback_inf.h"
-#include "hec_channel.h"
+#include "indexer_inf.h"
 #include "event_batch.h"
 
 #include <memory>
@@ -22,8 +22,8 @@ public:
 
     void start() override;
     void stop() override;
-    void add(const HecChannel& channel, const std::shared_ptr<EventBatch>& batch, const std::string& response) override;
-    void fail(const HecChannel& channel, const std::shared_ptr<EventBatch>& batch, const std::exception& ex) override;
+    void add(const std::shared_ptr<IndexerInf>& indexer, const std::shared_ptr<EventBatch>& batch, const std::string& response) override;
+    void fail(const std::shared_ptr<IndexerInf>& indexer, const std::shared_ptr<EventBatch>& batch, const std::exception& ex) override;
 
 private:
     std::shared_ptr<PollerCallbackInf> callback_;

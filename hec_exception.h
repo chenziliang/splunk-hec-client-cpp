@@ -12,11 +12,16 @@ namespace splunkhec {
 
 class HecException: public std::exception {
 public:
-    explicit HecException(const std::string& msg);
+    HecException(const std::string& msg, int code);
     const char* what() const noexcept override;
+
+    int error_code() const {
+        return code_;
+    }
 
 private:
     std::string msg_;
+    int code_;
 };
 
 } // namespace splunkhec

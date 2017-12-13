@@ -5,14 +5,13 @@
 #ifndef SPLUNK_HEC_CLIENT_CPP_EVENT_BATCH_H
 #define SPLUNK_HEC_CLIENT_CPP_EVENT_BATCH_H
 
+#include "event_inf.h"
+
 #include <chrono>
 #include <map>
 #include <memory>
 #include <vector>
 #include <string>
-
-#include "event_inf.h"
-#include "event.h"
 
 namespace splunkhec {
 
@@ -32,13 +31,15 @@ public:
     virtual EventBatch* create_from_this() const = 0;
 
     std::vector<unsigned char> serialize() const;
+
     void add(EventInf* event);
+
     EventBatch& add_extra_fields(const std::map<std::string, std::string>& fields);
 
-    bool timedout(int ttl /* in seconds */) const {
+    bool timedout(const std::chrono::seconds& ttl) const {
         auto now = std::chrono::steady_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - send_timestamp_).count();
-        return ttl > elapsed;
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - send_timestamp_);
+        return elapsed > ttl;
     }
 
     void reset_sendtimestamp() {

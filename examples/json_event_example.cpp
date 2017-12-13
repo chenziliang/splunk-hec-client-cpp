@@ -2,10 +2,9 @@
 // Created by kchen on 11/29/17.
 //
 
-#include <map>
+#include "json_event.h"
 
-#include "../json_event.h"
-#include "../rapidjson/include/rapidjson/prettywriter.h"
+#include <map>
 
 
 using namespace std;

@@ -20,16 +20,22 @@ void HttpResponsePoller::start() {}
 
 void HttpResponsePoller::stop() {}
 
-void HttpResponsePoller::add(const HecChannel& channel, const shared_ptr<EventBatch>& batch, const string& response) {
-    // response is json as below
+void HttpResponsePoller::add(const shared_ptr<IndexerInf>& indexer, const shared_ptr<EventBatch>& batch, const string& response) {
     // {"text":"Success","code":0, "ackId":7}
 
     Document doc;
     doc.Parse(response.data(), response.size());
-    auto pos{doc.FindMember("code")};
-    if (pos == doc.MemberEnd() || pos->value != 0) {
-        fail(channel, batch, HecException(response));
-        return;
+    if (doc.HasParseError()) {
+        return fail(indexer, batch, HecException(response, -1));
+    }
+
+    auto it{doc.FindMember("code")};
+    if (it == doc.MemberEnd() || !it->value.IsInt()) {
+        return fail(indexer, batch, HecException(response, -1));
+    }
+
+    if (it->value.GetInt() != 0) {
+        return fail(indexer, batch, HecException(response, it->value.GetInt()));
     }
 
     batch->commit();
@@ -38,7 +44,7 @@ void HttpResponsePoller::add(const HecChannel& channel, const shared_ptr<EventBa
     }
 }
 
-void HttpResponsePoller::fail(const HecChannel& channel, const shared_ptr<EventBatch>& batch, const exception& ex) {
+void HttpResponsePoller::fail(const shared_ptr<IndexerInf>& indexer, const shared_ptr<EventBatch>& batch, const exception& ex) {
     batch->fail();
     if (callback_) {
         callback_->on_event_failed(vector<shared_ptr<EventBatch>>{batch}, ex);

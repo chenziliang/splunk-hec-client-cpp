@@ -3,6 +3,7 @@
 //
 
 #include "raw_event_batch.h"
+#include "event.h"
 
 using namespace std;
 

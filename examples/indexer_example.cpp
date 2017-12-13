@@ -7,7 +7,6 @@
 
 #include "indexer.h"
 #include "poller_inf.h"
-#include "hec_channel.h"
 #include "json_event_batch.h"
 #include "http_response_poller.h"
 #include "http_client_factory.h"

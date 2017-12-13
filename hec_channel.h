@@ -10,34 +10,41 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 
 namespace splunkhec {
 
 class HecChannel {
 public:
-    explicit HecChannel(IndexerInf& indexer);
+    // HecChannel doesn't own indexer
+    explicit HecChannel(IndexerInf* indexer);
 
-    const IndexerInf& indexer() const {
+    const IndexerInf* indexer() const {
         return indexer_;
     }
 
-    IndexerInf& indexer() {
+    IndexerInf* indexer() {
         return indexer_;
     }
 
     void send(const std::shared_ptr<EventBatch>& batch) {
-        indexer_.send(batch);
+        indexer_->send(batch);
     }
 
     const std::string& id() const {
         return uuid_;
     }
 
+    bool operator ==(const HecChannel& rhs) const {
+        return uuid_ == rhs.uuid_;
+    }
+
 private:
-    IndexerInf& indexer_;
+    IndexerInf* indexer_;
     std::string uuid_;
 };
 
 } // namespace splunkhec
+
 
 #endif //SPLUNK_HEC_CLIENT_CPP_HEC_CHANNEL_H

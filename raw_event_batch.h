@@ -5,10 +5,10 @@
 #ifndef SPLUNK_HEC_CLIENT_CPP_RAW_EVENT_BATCH_H
 #define SPLUNK_HEC_CLIENT_CPP_RAW_EVENT_BATCH_H
 
+#include "event_batch.h"
+
 #include <string>
 #include <vector>
-
-#include "event_batch.h"
 
 namespace splunkhec {
 

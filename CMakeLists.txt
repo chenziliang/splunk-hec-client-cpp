@@ -8,10 +8,11 @@ set(LIB_SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/raw_event.h ${PROJECT_SOURCE_DIR}/json_event.h ${PROJECT_SOURCE_DIR}/event_batch.h
         ${PROJECT_SOURCE_DIR}/event_batch.cpp ${PROJECT_SOURCE_DIR}/json_event_batch.h ${PROJECT_SOURCE_DIR}/json_event_batch.cpp
         ${PROJECT_SOURCE_DIR}/raw_event_batch.h ${PROJECT_SOURCE_DIR}/raw_event_batch.cpp ${PROJECT_SOURCE_DIR}/config.h
-        ${PROJECT_SOURCE_DIR}/http_client_factory.h ${PROJECT_SOURCE_DIR}/hec_channel.h ${PROJECT_SOURCE_DIR}/hec_channel.cpp
+        ${PROJECT_SOURCE_DIR}/http_client_factory.h ${PROJECT_SOURCE_DIR}/hec_channel.h
         ${PROJECT_SOURCE_DIR}/indexer_inf.h ${PROJECT_SOURCE_DIR}/indexer.h ${PROJECT_SOURCE_DIR}/indexer.cpp
         ${PROJECT_SOURCE_DIR}/poller_inf.h ${PROJECT_SOURCE_DIR}/http_response_poller.h ${PROJECT_SOURCE_DIR}/http_response_poller.cpp
         ${PROJECT_SOURCE_DIR}/hec_exception.h ${PROJECT_SOURCE_DIR}/hec_exception.cpp ${PROJECT_SOURCE_DIR}/poller_callback_inf.h
+        ${PROJECT_SOURCE_DIR}/hec_response_parser.h ${PROJECT_SOURCE_DIR}/ack_poller.h ${PROJECT_SOURCE_DIR}/ack_poller.cpp
         )
 
 include_directories(${PROJECT_SOURCE_DIR})

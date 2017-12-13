@@ -4,6 +4,8 @@
 
 #include "event_batch.h"
 
+#include <cstring>
+
 using namespace std;
 using namespace rapidjson;
 
