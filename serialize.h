@@ -5,8 +5,8 @@
 #ifndef SPLUNK_HEC_CLIENT_CPP_SERIALIZE_H
 #define SPLUNK_HEC_CLIENT_CPP_SERIALIZE_H
 
-#include "rapidjson/include/rapidjson/writer.h"
-#include "rapidjson/include/rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 #include <string>
 #include <cstddef>
