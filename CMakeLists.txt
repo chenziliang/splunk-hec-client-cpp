@@ -4,6 +4,7 @@ project(splunk_hec_client_cpp)
 set(CMAKE_CXX_STANDARD 17)
 
 set(LIB_SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/init.h ${PROJECT_SOURCE_DIR}/init.cpp
         ${PROJECT_SOURCE_DIR}/hec_exception.h ${PROJECT_SOURCE_DIR}/hec_exception.cpp ${PROJECT_SOURCE_DIR}/http_client_factory.h
         ${PROJECT_SOURCE_DIR}/serialize.h ${PROJECT_SOURCE_DIR}/event_inf.h ${PROJECT_SOURCE_DIR}/event.h
         ${PROJECT_SOURCE_DIR}/raw_event.h ${PROJECT_SOURCE_DIR}/json_event.h

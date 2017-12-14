@@ -11,6 +11,8 @@
 #include "indexer_inf.h"
 #include "concurrent/thread_pool.h"
 
+#include <spdlog/spdlog.h>
+
 #include <memory>
 #include <string>
 #include <exception>
@@ -48,14 +50,16 @@ public:
     }
 
     AckPoller& operator=(const AckPoller&) = delete;
+    AckPoller& operator=(AckPoller&&) = delete;
     AckPoller(const AckPoller&) = delete;
+    AckPoller(AckPoller&&) = delete;
 
 private:
     void poll();
     void do_poll();
 
     void poll_acks(const std::shared_ptr<IndexerInf>& indexer, const std::vector<int64_t>& ack_ids);
-    void handle_ack_poll_response(const std::string& resp, const std::string& chanel);
+    void handle_ack_poll_response(const std::string& resp,  const std::shared_ptr<IndexerInf>& indexer);
 
 private:
     static const std::string ack_endpoint_;
@@ -120,6 +124,9 @@ private:
     std::chrono::seconds poll_interval_ = std::chrono::seconds(10);
     std::atomic_bool started_;
     concurrentcpp::ThreadPool pool_;
+
+private:
+    std::shared_ptr<spdlog::logger> logger_;
 };
 
 } // namespace splunkhec

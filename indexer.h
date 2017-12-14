@@ -28,8 +28,12 @@ public:
 
     bool has_backpressure() const override;
 
-    std::string channel() const override {
+    const std::string& channel() const override {
         return channel_;
+    }
+
+    const std::string& uri() const override {
+        return uri_;
     }
 
 private:
@@ -47,6 +51,7 @@ private:
     static const std::chrono::seconds backpressure_window_;
 
 private:
+    std::string uri_;
     std::string token_;
     std::string channel_;
     std::shared_ptr<PollerInf> poller_;

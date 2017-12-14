@@ -19,7 +19,7 @@ using namespace web::http::client;
 namespace splunkhec {
 
 Indexer::Indexer(const string& base_uri, const string& token, const shared_ptr<PollerInf>& poller, const HttpClientFactory& factory)
-        : token_("Splunk " + token), poller_(poller), client_(factory.create(base_uri)), factory_(factory) {
+        : uri_(base_uri), token_("Splunk " + token), poller_(poller), client_(factory.create(base_uri)), factory_(factory) {
     auto uuid{boost::uuids::random_generator()()};
     string channel{boost::uuids::to_string(uuid)};
     swap(channel_, channel);
