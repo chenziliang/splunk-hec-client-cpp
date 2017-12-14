@@ -5,6 +5,9 @@
 #include "raw_event_batch.h"
 #include "event.h"
 
+#include <cpprest/base_uri.h>
+
+using namespace web;
 using namespace std;
 
 namespace splunkhec {
@@ -33,14 +36,13 @@ string RawEventBatch::rest_endpoint() const {
     return raw_endpoint + metadata_params();
 }
 
-static void put_if_present(vector<string>& metas, const string& key, const string& value) {
-    if (!key.empty()) {
-        metas.push_back(key + "=" + value);
+static inline void put_if_present(vector<string>& metas, const string& key, const string& value) {
+    if (!value.empty()) {
+        metas.push_back(key + "=" + uri::encode_uri(value, uri::components::query));
     }
 }
 
 string RawEventBatch::metadata_params() const {
-    // FIXME uri builder (escaping)
     vector<string> metas;
     put_if_present(metas, sIndex, index_);
     put_if_present(metas, sSource, source_);

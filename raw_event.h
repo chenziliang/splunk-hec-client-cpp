@@ -15,7 +15,7 @@ namespace splunkhec {
 template <typename T>
 class RawEvent final: public Event<T> {
 public:
-    RawEvent(const T& eventData, void* tiedObj): Event<T>(eventData, tiedObj) {
+    RawEvent(const T& eventData, void* tiedObj = nullptr): Event<T>(eventData, tiedObj) {
     }
 
     RawEvent(T&& eventData, void *tiedObj): Event<T>(eventData, tiedObj) {

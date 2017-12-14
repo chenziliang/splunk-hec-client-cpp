@@ -98,10 +98,11 @@ void AckPoller::poll_acks(const shared_ptr<IndexerInf>& indexer, const vector<in
 }
 
 void AckPoller::handle_ack_poll_response(const string& resp, const shared_ptr<IndexerInf>& indexer) {
+    logger_->trace("polled acks from {} for channel {}, response={}", indexer->uri(), indexer->channel(), resp);
     vector<int64_t> committed_acks;
     bool ok = parse_ack_poll_response(resp, committed_acks);
     if (!ok) {
-        logger_->error("failed to poll ackes from {} for channel {}, response={}",
+        logger_->error("failed to poll acks from {} for channel {}, response={}",
                        indexer->uri(), indexer->channel(), resp);
         return;
     }

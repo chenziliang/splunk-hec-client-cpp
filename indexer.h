@@ -9,6 +9,7 @@
 #include "http_client_factory.h"
 
 #include <cpprest/http_client.h>
+#include <spdlog/spdlog.h>
 
 #include <string>
 #include <memory>
@@ -59,6 +60,9 @@ private:
     HttpClientFactory factory_;
     int backpressure_;
     std::chrono::steady_clock::time_point last_backpressure_time_;
+
+private:
+    std::shared_ptr<spdlog::logger> logger_;
 };
 
 } // namespace splunkhec
