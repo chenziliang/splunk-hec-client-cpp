@@ -30,17 +30,19 @@ public:
 
 shared_ptr<EventBatch> new_batch(int batch_size) {
     auto batch = make_shared<JsonEventBatch>();
+    auto event = "12-13-2017 14:26:49.007 -0800 INFO  Metrics - group=queue, name=aeq, max_size_kb=500, current_size_kb=0, current_size=0, largest_size=0, smallest_size=0";
     for (int i = 0; i < batch_size; ++i) {
-        batch->add(new JsonEvent<const char*>("12-13-2017 14:26:49.007 -0800 INFO  Metrics - group=queue, name=aeq, max_size_kb=500, current_size_kb=0, current_size=0, largest_size=0, smallest_size=0"));
+        batch->add(new JsonEvent<const char*>(event, nullptr));
     }
     return batch;
 }
 
 shared_ptr<EventBatch> new_raw_batch(int batch_size, const string& sourcetype, const string& line_breaker) {
+    auto event = "12-13-2017 14:26:49.007 -0800 INFO  Metrics - group=queue, name=aeq, max_size_kb=500, current_size_kb=0, current_size=0, largest_size=0, smallest_size=0";
     auto batch = shared_ptr<RawEventBatch>(RawEventBatch::Builder().set_sourcetype(sourcetype).build());
     batch->set_linebreaker(line_breaker);
     for (int i = 0; i < batch_size; ++i) {
-        batch->add(new RawEvent<const char*>("12-13-2017 14:26:49.007 -0800 INFO  Metrics - group=queue, name=aeq, max_size_kb=500, current_size_kb=0, current_size=0, largest_size=0, smallest_size=0"));
+        batch->add(new RawEvent<const char*>(event, nullptr));
     }
     return batch;
 }
@@ -48,7 +50,7 @@ shared_ptr<EventBatch> new_raw_batch(int batch_size, const string& sourcetype, c
 
 int main(int argc, char** argv) {
     auto logger = spdlog::get("splunk-hec");
-    logger->set_level(spdlog::level::info);
+    logger->set_level(spdlog::level::trace);
     vector<string> uris{"https://localhost:8088"};
     string token{"00000000-0000-0000-0000-000000000001"};
     Config config(uris, token);

@@ -8,6 +8,9 @@ using namespace std;
 
 namespace splunkhec {
 
+LoadBalancer::LoadBalancer(): logger_(spdlog::get("splunk-hec")) {
+}
+
 void LoadBalancer::add(const shared_ptr<IndexerInf>& indexer) {
     indexers_.push_back(indexer);
 }
@@ -24,7 +27,8 @@ void LoadBalancer::remove(const shared_ptr<IndexerInf>& indexer) {
 
 // return false when failed to send
 bool LoadBalancer::send(const shared_ptr<EventBatch>& batch) {
-    if (indexers_.empty()) {
+    if (batch->empty()) {
+        logger_->info("empty batch");
         return false;
     }
 
@@ -38,6 +42,7 @@ bool LoadBalancer::send(const shared_ptr<EventBatch>& batch) {
     }
 
     // all indexers have backpressure
+     logger_->warn("no available indexer, all have backpressure");
     return false;
 }
 

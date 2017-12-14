@@ -24,6 +24,8 @@ Indexer::Indexer(const string& base_uri, const string& token, const shared_ptr<P
     swap(channel_, channel);
 }
 
+// return true when batch is sent out
+// otherwise false
 bool Indexer::send(const shared_ptr<EventBatch>& batch) {
     Indexer* indexer = const_cast<Indexer*>(this);
     try {
