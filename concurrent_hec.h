@@ -2,6 +2,8 @@
 // Created by kchen on 12/13/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_CONCURRENT_HEC_H
 #define SPLUNK_HEC_CLIENT_CPP_CONCURRENT_HEC_H
 

@@ -2,6 +2,8 @@
 // Created by kchen on 12/3/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_POLLER_INF_H
 #define SPLUNK_HEC_CLIENT_CPP_POLLER_INF_H
 

@@ -2,6 +2,8 @@
 // Created by kchen on 12/12/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_HEC_RESPONSE_PARSER_H
 #define SPLUNK_HEC_CLIENT_CPP_HEC_RESPONSE_PARSER_H
 
