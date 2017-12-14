@@ -11,7 +11,7 @@ set(CPPRESTSDK_EXAMPLE cpprestsdk_example.cpp)
 set(INDEXER_EXAMPLE indexer_example.cpp ${LIB_SOURCE_FILES})
 set(BLOCKING_QUEUE_EXAMPLE blocking_queue_example.cpp)
 set(THREAD_POOL_EXAMPLE thread_pool_example.cpp)
-set(RAPIDJSON_EXAMPLE rapidjson_example.cpp)
+set(RAPIDJSON_EXAMPLE rapidjson_example.cpp ${LIB_SOURCE_FILES})
 set(ACK_POLLER_EXAMPLE ack_poller_example.cpp ${LIB_SOURCE_FILES})
 set(CONCURRENT_HEC_EXAMPLE concurrent_hec_exmaple.cpp ${LIB_SOURCE_FILES})
 
@@ -28,8 +28,21 @@ add_executable(ack_poller_example ${ACK_POLLER_EXAMPLE})
 add_executable(concurrent_hec_example ${CONCURRENT_HEC_EXAMPLE})
 
 link_directories(${OPENSSL_ROOT_DIR}/lib)
-set(DEPENDENT_LIBS cpprest boost_system-mt boost_thread-mt boost_chrono-mt ${OPENSSL_ROOT_DIR}/lib/libcrypto.dylib ${OPENSSL_ROOT_DIR}/lib/libssl.dylib)
 
+if(WIN32)
+endif(WIN32)
+
+if(APPLE)
+    set(DEPENDENT_LIBS cpprest boost_system-mt boost_thread-mt boost_chrono-mt ${OPENSSL_ROOT_DIR}/lib/libcrypto.dylib ${OPENSSL_ROOT_DIR}/lib/libssl.dylib)
+endif(APPLE)
+
+if(UNIX AND NOT APPLE)
+    set(DEPENDENT_LIBS cpprest boost_system boost_thread boost_chrono pthread crypto ssl)
+endif(UNIX AND NOT APPLE)
+
+target_link_libraries(blocking_queue_example pthread)
+target_link_libraries(thread_pool_example pthread)
+target_link_libraries(rapidjson_example ${DEPENDENT_LIBS})
 target_link_libraries(json_event_batch_example ${DEPENDENT_LIBS})
 target_link_libraries(raw_event_batch_example ${DEPENDENT_LIBS})
 target_link_libraries(cpprestsdk_example ${DEPENDENT_LIBS})

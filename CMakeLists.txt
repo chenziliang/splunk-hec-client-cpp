@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(splunk_hec_client_cpp)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 set(LIB_SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/init.h ${PROJECT_SOURCE_DIR}/init.cpp

@@ -2,8 +2,8 @@
 
 echo "install cpprestsdk"
 
-sudo apt-get install libcpprest-dev
+sudo apt-get -f install libcpprest-dev
 
 echo "install spdlog"
 
-sudo apt-get install libspdlog-dev
+sudo apt-get -f install libspdlog-dev
