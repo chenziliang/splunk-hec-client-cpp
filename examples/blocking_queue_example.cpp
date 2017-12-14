@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <thread>
+#include <atomic>
 
 using namespace concurrentcpp;
 using namespace std;
@@ -38,7 +39,7 @@ int main(int argc, const char** argv) {
         }
     });
 
-    atomic_int64_t count{0};
+    atomic<int64_t> count{0};
     thread consumer1([&]{
         while (true) {
             int i = 0;

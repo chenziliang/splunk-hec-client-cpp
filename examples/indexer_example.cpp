@@ -40,7 +40,7 @@ int main(int argc, const char** argv) {
 
     Indexer idx("https://localhost:8088", "1B901D2B-576D-40CD-AF1E-98141B499534", poller, factory);
     shared_ptr<EventBatch> batch(new JsonEventBatch);
-    batch->add(new JsonEvent<const char*>("hello, rest cpp sdk"));
+    batch->add(new JsonEvent<const char*>("hello, rest cpp sdk", nullptr));
     idx.send(batch);
 
     return 0;

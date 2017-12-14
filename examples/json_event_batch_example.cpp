@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <iterator>
 
 #include "json_event_batch.h"
 #include "json_event.h"
