@@ -2,6 +2,8 @@
 // Created by kchen on 12/2/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_CONFIG_H
 #define SPLUNK_HEC_CLIENT_CPP_CONFIG_H
 

@@ -2,13 +2,15 @@
 // Created by kchen on 11/30/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_JSON_EVENT_H_H
 #define SPLUNK_HEC_CLIENT_CPP_JSON_EVENT_H_H
 
+#include "event.h"
+
 #include <map>
 #include <string>
-
-#include "event.h"
 
 namespace splunkhec {
 
@@ -17,10 +19,10 @@ static const std::string sFields = "fields";
 template <typename T>
 class JsonEvent final: public Event<T> {
 public:
-    explicit JsonEvent(const T& eventData, void* tiedObj = nullptr): Event<T>(eventData, tiedObj) {
+    explicit JsonEvent(const T& event_data, const boost::any& tied_obj): Event<T>(event_data, tied_obj) {
     }
 
-    explicit JsonEvent(T&& eventData, void *tiedObj = nullptr): Event<T>(eventData, tiedObj) {
+    explicit JsonEvent(T&& event_data, boost::any& tied_obj): Event<T>(std::move(event_data), std::move(tied_obj)) {
     }
 
     JsonEvent& add_fields(const std::map<std::string, std::string>& extraFields) override {

@@ -2,6 +2,8 @@
 // Created by kchen on 11/30/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_EVENT_BATCH_H
 #define SPLUNK_HEC_CLIENT_CPP_EVENT_BATCH_H
 

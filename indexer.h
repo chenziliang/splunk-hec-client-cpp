@@ -2,6 +2,8 @@
 // Created by kchen on 12/3/17.
 //
 
+#pragma once
+
 #ifndef SPLUNK_HEC_CLIENT_CPP_INDEXER_H
 #define SPLUNK_HEC_CLIENT_CPP_INDEXER_H
 
@@ -9,6 +11,7 @@
 #include "http_client_factory.h"
 
 #include <cpprest/http_client.h>
+#include <spdlog/spdlog.h>
 
 #include <string>
 #include <memory>
@@ -28,8 +31,12 @@ public:
 
     bool has_backpressure() const override;
 
-    std::string channel() const override {
+    const std::string& channel() const override {
         return channel_;
+    }
+
+    const std::string& uri() const override {
+        return uri_;
     }
 
 private:
@@ -47,6 +54,7 @@ private:
     static const std::chrono::seconds backpressure_window_;
 
 private:
+    std::string uri_;
     std::string token_;
     std::string channel_;
     std::shared_ptr<PollerInf> poller_;
@@ -54,6 +62,9 @@ private:
     HttpClientFactory factory_;
     int backpressure_;
     std::chrono::steady_clock::time_point last_backpressure_time_;
+
+private:
+    std::shared_ptr<spdlog::logger> logger_;
 };
 
 } // namespace splunkhec

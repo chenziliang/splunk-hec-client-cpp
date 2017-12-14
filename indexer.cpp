@@ -6,31 +6,33 @@
 #include "poller_inf.h"
 #include "hec_exception.h"
 
-#include <functional>
-
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 
-using namespace std;
 using namespace web::http;
 using namespace web::http::client;
+using namespace std;
 
 namespace splunkhec {
 
 Indexer::Indexer(const string& base_uri, const string& token, const shared_ptr<PollerInf>& poller, const HttpClientFactory& factory)
-        : token_("Splunk " + token), poller_(poller), client_(factory.create(base_uri)), factory_(factory) {
+        : uri_(base_uri), token_("Splunk " + token), poller_(poller), client_(factory.create(base_uri)),
+          factory_(factory), logger_(spdlog::get("splunk-hec")) {
     auto uuid{boost::uuids::random_generator()()};
     string channel{boost::uuids::to_string(uuid)};
     swap(channel_, channel);
 }
 
+// return true when batch is sent out
+// otherwise false
 bool Indexer::send(const shared_ptr<EventBatch>& batch) {
     Indexer* indexer = const_cast<Indexer*>(this);
     try {
         string resp = post(batch->rest_endpoint(), batch->serialize(), batch->content_type());
         poller_->add(indexer->shared_from_this(), batch, resp);
     } catch (const HecException& ex) {
+        logger_->error("failed to post to {}{}, error={}", uri_, batch->rest_endpoint(), ex.what());
         poller_->fail(indexer->shared_from_this(), batch, ex);
         return false;
     }
@@ -80,6 +82,8 @@ string Indexer::post(const string& uri, const vector<unsigned char>& data, const
     if (except.error_code() != 0) {
         throw except;
     }
+
+    logger_->trace("received post response from {}{}, response={}", uri_, uri, resp);
 
     clear_backpressure();
 

@@ -13,7 +13,7 @@ using namespace concurrentcpp;
 namespace splunkhec {
 
 AckPoller::AckPoller(size_t threads,  const shared_ptr<PollerCallbackInf>& callback)
-        : pool_(threads + 1), callback_(callback) {
+        : pool_(threads + 1), callback_(callback), logger_(spdlog::get("splunk-hec")) {
 }
 
 void AckPoller::start() {
@@ -24,6 +24,7 @@ void AckPoller::start() {
         return;
     }
     pool_.submit(bind(&AckPoller::poll, this));
+    logger_->info("AckPoller started");
 }
 
 void AckPoller::stop() {
@@ -58,6 +59,7 @@ void AckPoller::do_poll() {
     }
 
     if (!timeouts.empty() && callback_) {
+        logger_->warn("handling {} timedout batches", timeouts.size());
         callback_->on_event_failed(timeouts, HecException("timed out", -1));
     }
 
@@ -84,26 +86,37 @@ void AckPoller::poll_acks(const shared_ptr<IndexerInf>& indexer, const vector<in
         return;
     }
 
+    logger_->info("polling {} acks from {} for channel {}", ack_ids.size(), indexer->uri(), indexer->channel());
     vector<unsigned char> bytes{prepare_ack_poll_payload(ack_ids)};
     try {
         string resp = indexer->post(ack_endpoint_, bytes, "application/json");
-        handle_ack_poll_response(resp, indexer->channel());
+        handle_ack_poll_response(resp, indexer);
     } catch (const HecException& e) {
-        // log, continue to next
+        logger_->error("failed to poll ack from {} for channel {}, error={}",
+                       indexer->uri(), indexer->channel(), e.what());
     }
 }
 
-void AckPoller::handle_ack_poll_response(const string& resp, const string& channel) {
+void AckPoller::handle_ack_poll_response(const string& resp, const shared_ptr<IndexerInf>& indexer) {
+    logger_->trace("polled acks from {} for channel {}, response={}", indexer->uri(), indexer->channel(), resp);
     vector<int64_t> committed_acks;
     bool ok = parse_ack_poll_response(resp, committed_acks);
     if (!ok) {
+        logger_->error("failed to poll acks from {} for channel {}, response={}",
+                       indexer->uri(), indexer->channel(), resp);
+        return;
+    }
+
+    logger_->info("polled {} ackes from {} for channel {}",
+                  committed_acks.size(), indexer->uri(), indexer->channel());
+    if (committed_acks.empty()) {
         return;
     }
 
     shared_ptr<OutstandingBatches> batches;
     {
         lock_guard<mutex> guard{lock_};
-        batches = outstanding_batches_[channel];
+        batches = outstanding_batches_[indexer->channel()];
     }
 
     if (batches) {
@@ -114,7 +127,8 @@ void AckPoller::handle_ack_poll_response(const string& resp, const string& chann
 void AckPoller::add(const shared_ptr<IndexerInf>& indexer, const shared_ptr<EventBatch>& batch, const string& response) {
     auto code_with_ackid = parse_response_with_ackid(response);
     if (code_with_ackid.first != 0) {
-        // response code is not good
+        logger_->error("failed to post events to {} for channel {}, response={}",
+                       indexer->uri(), indexer->channel(), response);
         return;
     }
 

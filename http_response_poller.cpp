@@ -4,8 +4,7 @@
 
 #include "http_response_poller.h"
 #include "hec_exception.h"
-
-#include "rapidjson/include/rapidjson/document.h"
+#include "hec_response_parser.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -21,21 +20,9 @@ void HttpResponsePoller::start() {}
 void HttpResponsePoller::stop() {}
 
 void HttpResponsePoller::add(const shared_ptr<IndexerInf>& indexer, const shared_ptr<EventBatch>& batch, const string& response) {
-    // {"text":"Success","code":0, "ackId":7}
-
-    Document doc;
-    doc.Parse(response.data(), response.size());
-    if (doc.HasParseError()) {
-        return fail(indexer, batch, HecException(response, -1));
-    }
-
-    auto it{doc.FindMember("code")};
-    if (it == doc.MemberEnd() || !it->value.IsInt()) {
-        return fail(indexer, batch, HecException(response, -1));
-    }
-
-    if (it->value.GetInt() != 0) {
-        return fail(indexer, batch, HecException(response, it->value.GetInt()));
+    int code = parse_response(response);
+    if (code != 0) {
+        return fail(indexer, batch, HecException(response, code));
     }
 
     batch->commit();
