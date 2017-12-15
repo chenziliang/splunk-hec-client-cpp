@@ -7,9 +7,10 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cassert>
+#include <iterator>
 
 using namespace std;
-using namespace rapidjson;
 using namespace splunkhec;
 
 int main(int argc, const char** argv) {

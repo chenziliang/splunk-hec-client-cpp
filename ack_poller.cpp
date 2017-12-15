@@ -13,7 +13,8 @@ using namespace concurrentcpp;
 namespace splunkhec {
 
 AckPoller::AckPoller(size_t threads,  const shared_ptr<PollerCallbackInf>& callback)
-        : pool_(threads + 1), callback_(callback), logger_(spdlog::get("splunk-hec")) {
+        : pool_(threads + 1), callback_(callback), logger_(spdlog::get("splunk-hec")),
+        started_(false) {
 }
 
 void AckPoller::start() {
