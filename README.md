@@ -20,9 +20,9 @@ C++14
 # Build
 ## Prerequistives
 
-1. cmake
+1. cmake 3.8 above
 2. make
-3. gcc 5.0 or clang 3.4
+3. gcc 5.0 above or clang 3.4 above
 4. git 1.9 above
 
 
@@ -59,7 +59,7 @@ Run the following command to install dependencies
 ## Build
 
 ```
-# git clone --recursive -j8 git@github.com:chenziliang/splunk-hec-client-cpp.git
+# git clone --recursive git@github.com:chenziliang/splunk-hec-client-cpp.git
 # mkdir build && cd build && cmake ..
 ```
 
