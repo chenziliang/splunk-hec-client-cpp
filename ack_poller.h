@@ -124,8 +124,8 @@ private:
     std::shared_ptr<PollerCallbackInf> callback_;
     std::chrono::seconds ttl_ = std::chrono::seconds(120);
     std::chrono::seconds poll_interval_ = std::chrono::seconds(10);
-    std::atomic_bool started_;
     concurrentcpp::ThreadPool pool_;
+    std::atomic_bool started_;
 
 private:
     std::shared_ptr<spdlog::logger> logger_;
