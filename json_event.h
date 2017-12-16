@@ -37,6 +37,11 @@ public:
         return *this;
     }
 
+    const std::map<std::string, std::string>& fields() const {
+        return fields_;
+    }
+
+
 #define WRITE_IF_NOT_EMPTY(k, v) \
     if (!v.empty()) { \
         writer.String(k.data(), k.size()); \

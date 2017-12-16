@@ -24,3 +24,4 @@ set(LIB_SOURCE_FILES
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/rapidjson/include)
 add_subdirectory(examples)
+add_subdirectory(test)
